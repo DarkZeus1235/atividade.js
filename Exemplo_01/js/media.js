@@ -1,46 +1,55 @@
-document.addEventListener("DOMContentLoaded"), function() {
-    // Função para calcular o valor do carro ao longo do tempo
-    function calcularValoresCarro(valorBase, anos) {
-        var informacoesVeiculo = document.getElementById('informacoesVeiculo');
-        var tabelaValores = document.getElementById('tabelaValores');
+document.addEventListener("DOMContentLoaded", function() {
+    // Array para armazenar as notas dos alunos
+    var notasAlunos = [];
 
-        // Limpa as informações do veículo e a tabela antes de adicionar novos elementos
-        informacoesVeiculo.innerHTML = '';
-        tabelaValores.innerHTML = '';
+    // Função para calcular a média de notas
+    function calcularMedia(notas) {
+        var totalNotas = notas.reduce(function(acumulador, nota) {
+            return acumulador + nota;
+        }, 0);
 
-        // Condições para validar o valor base e os anos
-        if (isNaN(valorBase) || isNaN(anos) || anos <= 0) {
-            alert('Por favor, forneça um valor base válido e um número de anos maior que zero.');
+        var media = totalNotas / notas.length;
+        return media;
+    }
+
+    // Função para adicionar uma nota à tabela e ao array
+    function adicionarNota() {
+        var notaAlunoInput = document.getElementById('notaAluno');
+        var nota = parseFloat(notaAlunoInput.value);
+
+        // Validação da nota
+        if (isNaN(nota) || nota < 0 || nota > 10) {
+            alert('Por favor, forneça uma nota válida entre 0 e 10.');
             return;
         }
 
-        // Adiciona informações do veículo
-        var informacoesHTML = '<p><strong>Nome do Veículo:</strong> Seu Veículo</p>';
-        informacoesHTML += '<p><strong>Valor Base do Carro:</strong> R$ ' + valorBase.toFixed(2) + '</p>';
-        informacoesHTML += '<p><strong>Número de Anos:</strong> ' + anos + '</p>';
-        informacoesVeiculo.innerHTML = informacoesHTML;
+        // Adiciona a nota à tabela
+        adicionarLinhaTabela(tabelaNotas, 'Aluno ' + (notasAlunos.length + 1), nota);
 
-        // Inicializa o valor do carro
-        var valorCarro = valorBase;
+        // Adiciona a nota ao array
+        notasAlunos.push(nota);
 
-        // Adiciona linhas à tabela para cada ano
-        for (var i = 1; i <= anos; i++) {
-            // Aplica aumentos com base no ano
-            if (i >= 1 && i < 5) {
-                valorCarro += valorCarro * 0.1; // Aumento de 10% para os primeiros 4 anos
-            } else if (i >= 5 && i < 10) {
-                valorCarro += valorCarro * 0.05; // Aumento de 5% dos anos 5 ao 9
-            } else {
-                valorCarro += valorCarro * 0.02; // Aumento de 2% a partir do 10º ano
-            }
-
-            // Adiciona uma nova linha à tabela
-            var novaLinha = tabelaValores.insertRow();
-            var colunaAno = novaLinha.insertCell(0);
-            var colunaValor = novaLinha.insertCell(1);
-
-            colunaAno.textContent = i;
-            colunaValor.textContent = 'R$ ' + valorCarro.toFixed(2);
-        }
+        // Atualiza a média
+        atualizarMedia();
     }
-}
+
+    // Função para atualizar a média e exibir no HTML
+    function atualizarMedia() {
+        var mediaFinal = calcularMedia(notasAlunos);
+        var resultadoElement = document.getElementById('resultado');
+        resultadoElement.innerHTML = 'A média dos alunos é: ' + mediaFinal.toFixed(2);
+    }
+
+    // Função para adicionar uma linha na tabela
+    function adicionarLinhaTabela(tabela, aluno, nota) {
+        var novaLinha = tabela.insertRow();
+        var colunaAluno = novaLinha.insertCell(0);
+        var colunaNota = novaLinha.insertCell(1);
+
+        colunaAluno.textContent = aluno;
+        colunaNota.textContent = nota;
+    }
+
+    // Expondo a função adicionarNota para ser chamada no HTML
+    window.adicionarNota = adicionarNota;
+});
